@@ -1,0 +1,60 @@
+# Preparations
+```{r}
+suppressPackageStartupMessages({
+  library("MOFAdata")
+  library("MOFA2")
+  library("matrixStats")
+  library("tidyverse")
+})
+```
+
+# Prepare data
+We load a small subset of the CLL data to compare MOFA results with an MCMC implementation. The code shown in this notebook is only for the sake of completeness to reproduce how the MOFA model was trained.
+```{r}
+# number of latent factors
+num_factors <- 5
+# number of features
+num_features <- 20
+
+data("CLL_data")
+CLL_metadata <- read_tsv("ftp://ftp.ebi.ac.uk/pub/databases/mofa/cll_vignette/sample_metadata.txt")
+
+Y_rna <- CLL_data[["mRNA"]]
+Y_drug <- CLL_data[["Drugs"]]
+Y_met <- CLL_data[["Methylation"]]
+
+# subset to non-missing samples
+# (greta cannot easily deal with missing data)
+keep <- !colAnyMissings(Y_rna) & !colAnyMissings(Y_drug) & !colAnyMissings(Y_met)
+Y_rna <- Y_rna[,keep]
+Y_drug <- Y_drug[,keep]
+Y_met <- Y_met[,keep]
+CLL_metadata <- CLL_metadata %>% 
+  # setting rownames on tibble is deprecated,
+  as.data.frame() %>% 
+  `rownames<-`(CLL_metadata$sample) %>% 
+  {.[colnames(Y_rna),]}
+
+# center and select topvar D features
+Y_rna <- Y_rna %>% t() %>% scale(scale=F) %>% t()
+Y_rna <- Y_rna[rowVars(Y_rna) %>% order(decreasing = T) %>% head(num_features),]
+Y_drug <- Y_drug %>% t() %>% scale(scale=F) %>% t()
+Y_drug <- Y_drug[rowVars(Y_drug) %>% order(decreasing = T) %>% head(num_features),]
+Y_met <- Y_met %>% t() %>% scale(scale=F) %>% t()
+Y_met <- Y_met[rowVars(Y_met) %>% order(decreasing = T) %>% head(num_features),]
+```
+
+# run MOFA
+```{r}
+mofa_obj <- create_mofa_from_matrix(list(drug = Y_drug, met = Y_met, rna = Y_rna))
+samples_metadata(mofa_obj) <- CLL_metadata
+
+data_opts <- get_default_data_options(mofa_obj)
+model_opts <- get_default_model_options(mofa_obj)
+model_opts$num_factors <- num_factors
+training_opts <- get_default_training_options(mofa_obj)
+training_opts$convergence_mode <- "slow"
+
+mofa_obj <- prepare_mofa(mofa_obj, data_options = data_opts, model_options = model_opts, training_options = training_opts)
+mofa_obj <- run_mofa(mofa_obj, outfile = "mofa_obj_trained.hdf5")
+```
