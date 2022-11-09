@@ -144,7 +144,7 @@ draws <- mcmc(m, one_by_one = T, verbose = FALSE)
 ```
 
 # Chain convergence
-We assess the convergence of the four chains by randomly selecting 5 elements per matrix and inspecting their traceplots. There is almost no mixing between the chains, indicating that the parameters of the model are not identifiable, leading to chains that attain different local optima of the posterior.
+We assess the convergence of the four chains by randomly selecting 10 elements per matrix and inspecting their traceplots. There is almost no mixing between the chains, indicating that the parameters of the model are not identifiable, leading to chains that attain different local optima of the posterior.
 ```{r, fig.width=15, fig.height=15}
 set.seed(5)
 c(
@@ -166,8 +166,8 @@ plot_factor_cor(mofa_obj_mcmc)
 plot_factors(mofa_obj_mcmc, color_by="IGHV")
 ```
 
-Moreover, the MCMC model gives a worse solution of the factorization problem, as the distribution of the residuals is much wider than the one obtained by MOFA. 
-```{r}
+Moreover, the MCMC model gives a worse solution of the factorization problem, as the distribution of the residuals is much wider than the ones obtained by MOFA. 
+```{r, fig.width=10}
 W_drug_mcmc <- mofa_obj_mcmc@expectations$W$drug
 W_met_mcmc <- mofa_obj_mcmc@expectations$W$met
 W_rna_mcmc <- mofa_obj_mcmc@expectations$W$rna

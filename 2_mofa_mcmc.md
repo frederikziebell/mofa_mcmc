@@ -173,7 +173,7 @@ draws <- mcmc(m, one_by_one = T, verbose = FALSE)
 
 # Chain convergence
 
-We assess the convergence of the four chains by randomly selecting 5
+We assess the convergence of the four chains by randomly selecting 10
 elements per matrix and inspecting their traceplots. There is almost no
 mixing between the chains, indicating that the parameters of the model
 are not identifiable, leading to chains that attain different local
@@ -219,8 +219,8 @@ plot_factors(mofa_obj_mcmc, color_by="IGHV")
 ![](2_mofa_mcmc_files/figure-gfm/unnamed-chunk-8-3.png)<!-- -->
 
 Moreover, the MCMC model gives a worse solution of the factorization
-problem, as the distribution of the residuals is much wider than the one
-obtained by MOFA.
+problem, as the distribution of the residuals is much wider than the
+ones obtained by MOFA.
 
 ``` r
 W_drug_mcmc <- mofa_obj_mcmc@expectations$W$drug
