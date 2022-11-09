@@ -4,18 +4,7 @@ author: "Frederik Ziebell"
 output: 
   github_document:
     html_preview: false
-  html_document:
-    toc: true
-    toc_float: true
 ---
-
-<style type="text/css">
-.main-container {
-  max-width: 1600px !important;
-  margin-left: auto;
-  margin-right: auto;
-}
-</style>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, cache= TRUE, collapse = TRUE)

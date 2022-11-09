@@ -2,14 +2,6 @@ MOFA MCMC
 ================
 Frederik Ziebell
 
-<style type="text/css">
-.main-container {
-  max-width: 1600px !important;
-  margin-left: auto;
-  margin-right: auto;
-}
-</style>
-
 # Preparations
 
 ``` r
